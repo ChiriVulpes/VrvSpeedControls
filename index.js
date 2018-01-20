@@ -22,9 +22,17 @@ if (parent === top) {
 	const buttonValue = document.querySelector(".vjs-playback-rate-value");
 	const video = document.querySelector("video");
 	button.addEventListener("click", () => {
-		if (video.playbackRate == 1) video.playbackRate = 2;
-		else video.playbackRate = 1;
+		video.playbackRate += 0.5;
+		if (video.playbackRate > 4) video.playbackRate = 1;
 		buttonValue.innerText = video.playbackRate;
+	});
+	button.addEventListener("contextmenu", (event) => {
+		video.playbackRate -= 0.5;
+		if (video.playbackRate < 1) video.playbackRate = 4;
+		buttonValue.innerText = video.playbackRate;
+
+		event.preventDefault();
+		return false;
 	});
 
 }
