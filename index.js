@@ -38,6 +38,23 @@ if (parent === top) {
 .vjs-playback-rate:hover {
     --add-opacity: 0.1;
 }
+
+.nextButton {
+    right: 117px !important;
+    position: absolute !important;
+	cursor: pointer;
+}
+.nextButton::before {
+	content: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgODk4LjMgODk4LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQo8cG9seWdvbiBwb2ludHM9IjEyMC4yLDg4Mi41IDU1My42LDQ0OS4yIDEyMC4yLDE1LjggMCwxMzYgMzEzLjIsNDQ5LjIgMCw3NjIuMyIgZmlsbD0iI2ZmZiIvPg0KPHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSI4NjYuNyIgZmlsbD0iI2ZmZiIgeT0iMTUuOCIgeD0iNjUwIi8+PC9nPg0KPC9zdmc+);
+    width: 20px !important;
+    display: block;
+    top: 15px !important;
+    left: 15px !important;
+    filter: brightness(0.75);
+}
+.nextButton:hover::before {
+	filter: brightness(0.95);
+}
 	`;
 	document.body.appendChild(style);
 
@@ -47,51 +64,72 @@ if (parent === top) {
 		speed = data["VrvSpeedControls:speed"] || speed;
 	});
 
-	let button;
-	let buttonValue;
+	let rateButton;
+	let rateButtonValue;
+	let nextButton;
 
 	setInterval(() => {
 		const video = document.querySelector("video");
 
 		speed = speed || video.playbackRate;
 
-		const newButton = document.querySelector(".vjs-playback-rate");
+		const currentRateButton = document.querySelector(".vjs-playback-rate");
 
-		if (button !== newButton) {
-			button = newButton;
-			buttonValue = document.querySelector(".vjs-playback-rate-value");
-			bind();
+		if (rateButton !== currentRateButton) {
+			rateButton = currentRateButton;
+			rateButtonValue = document.querySelector(".vjs-playback-rate-value");
+			bindRateButton();
 		}
 
-		button.setAttribute("rate", buttonValue.innerText = video.playbackRate = speed);
+		rateButton.setAttribute("rate", rateButtonValue.innerText = video.playbackRate = speed);
+
+		const currentNextButton = document.querySelector(".nextButton");
+
+		if (nextButton !== currentNextButton) {
+			nextButton = document.createElement("div");
+			nextButton.classList.add("vjs-button", "vjs-control", "nextButton");
+			nextButton.setAttribute("title", "Next");
+
+			document.querySelector(".vjs-control-bar").appendChild(nextButton);
+			bindNextButton();
+		}
 	}, 2000);
 
-	function bind() {
-		button.addEventListener("click", () => {
+	function bindRateButton() {
+		rateButton.addEventListener("click", () => {
 			const video = document.querySelector("video");
 
 			speed = speed || video.playbackRate;
 
 			speed += 0.5;
 			if (speed > 3) speed = 1;
-			button.setAttribute("rate", buttonValue.innerText = video.playbackRate = speed);
+			rateButton.setAttribute("rate", rateButtonValue.innerText = video.playbackRate = speed);
 
 			chrome.storage.sync.set({ "VrvSpeedControls:speed": speed });
 		});
 
-		button.addEventListener("contextmenu", (event) => {
+		rateButton.addEventListener("contextmenu", (event) => {
 			const video = document.querySelector("video");
 
 			speed = speed || video.playbackRate;
 
 			speed -= 0.5;
 			if (speed < 1) speed = 3;
-			button.setAttribute("rate", buttonValue.innerText = video.playbackRate = speed);
+			rateButton.setAttribute("rate", rateButtonValue.innerText = video.playbackRate = speed);
 
 			chrome.storage.sync.set({ "VrvSpeedControls:speed": speed });
 
 			event.preventDefault();
 			return false;
+		});
+
+	}
+
+	function bindNextButton() {
+		nextButton.addEventListener("click", () => {
+			const video = document.querySelector("video");
+			video.currentTime = video.duration;
+			video.play();
 		});
 	}
 
