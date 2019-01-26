@@ -17,7 +17,7 @@ if (parent === top) {
 }
 .vjs-playback-rate-value {
 	padding-top: 10px;
-    text-shadow: 0 0 3px black, 0 0 3px black;
+    text-shadow: 0 0 1px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black;
 }
 
 .vjs-playback-rate[rate="1"] {
