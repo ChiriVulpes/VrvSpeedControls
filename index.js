@@ -125,10 +125,15 @@ if (parent === top) {
 
 	}
 
+	async function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
 	function bindNextButton() {
-		nextButton.addEventListener("click", () => {
+		nextButton.addEventListener("click", async () => {
 			const video = document.querySelector("video");
 			video.currentTime = video.duration;
+			await sleep(100);
 			video.play();
 		});
 	}
